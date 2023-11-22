@@ -1,6 +1,5 @@
-/html-to-pdf-wrapper-plugin-client/target/
-/html-to-pdf-wrapper-plugin/html-to-pdf-wrapper-plugin-client.iml
-/html-to-pdf-wrapper-plugin/target/
 /.idea/
+/html-to-pdf-wrapper-plugin-client/target/
+/html-to-pdf-wrapper-plugin/target/
 /html-to-pdf-wrapper-plugin/html-to-pdf-wrapper-plugin.iml
 /html-to-pdf-wrapper-plugin-client/html-to-pdf-wrapper-plugin-client.iml
