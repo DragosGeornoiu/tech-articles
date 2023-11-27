@@ -22,12 +22,13 @@ public class HtmlToPdfMojo extends AbstractMojo {
       "Failed to generate PDF file [%s] from html file [%s].";
   private static final String ERROR_MESSAGE_NO_HTML_FILE_FOUND = "No HTML file found at [%s]";
 
-  public static final String WRAPPED_PLUGIN_GROUP_ID = "au.net.causal.maven.plugins";
-  public static final String WRAPPED_PLUGIN_ARTIFACT_ID = "html2pdf-maven-plugin";
-  public static final String WRAPPED_PLUGIN_VERSION = "2.0";
+  private static final String WRAPPED_PLUGIN_GROUP_ID = "au.net.causal.maven.plugins";
+  private static final String WRAPPED_PLUGIN_ARTIFACT_ID = "html2pdf-maven-plugin";
+  private static final String WRAPPED_PLUGIN_VERSION = "2.0";
   private static final String WRAPPED_PLUGIN_GOAL = "html2pdf";
-  public static final String WRAPPER_PLUGIN_ID = "generate-pdf";
-  public static final String WRAPPER_PLUGIN_PHASE = "generate-resources";
+
+  private static final String WRAPPER_PLUGIN_ID = "generate-pdf";
+  private static final String WRAPPER_PLUGIN_PHASE = "generate-resources";
 
   @Parameter(property = "inputFile", required = true)
   private String inputFile;
@@ -54,7 +55,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     String inputFileName = inputFilePath.getName();
 
     try {
-      Plugin html2pdfPlugin = getMvnPlugin(outputFile, inputFile, inputFileName);
+      Plugin html2pdfPlugin = creteMvnPlugin(outputFile, inputFile, inputFileName);
 
       MojoExecutor.ExecutionEnvironment executionEnvironment =
           MojoExecutor.executionEnvironment(mavenProject, mavenSession, pluginManager);
@@ -69,22 +70,27 @@ public class HtmlToPdfMojo extends AbstractMojo {
     }
   }
 
-  private Plugin getMvnPlugin(String outputFile, String inputDirectory, String inputFileName) {
+  private Plugin creteMvnPlugin(String outputFile, String inputDirectory, String inputFileName) {
     Plugin plugin = new Plugin();
 
     plugin.setGroupId(WRAPPED_PLUGIN_GROUP_ID);
     plugin.setArtifactId(WRAPPED_PLUGIN_ARTIFACT_ID);
     plugin.setVersion(WRAPPED_PLUGIN_VERSION);
 
-    PluginExecution pluginExecution = new PluginExecution();
-    pluginExecution.setGoals(Collections.singletonList(WRAPPED_PLUGIN_GOAL));
-    pluginExecution.setId(WRAPPER_PLUGIN_ID);
-    pluginExecution.setPhase(WRAPPER_PLUGIN_PHASE);
+    PluginExecution pluginExecution = createMvnPluginExecution();
     plugin.setExecutions(Collections.singletonList(pluginExecution));
     plugin.setConfiguration(
         computeWrappedPluginConfiguration(outputFile, inputDirectory, inputFileName));
 
     return plugin;
+  }
+
+  private PluginExecution createMvnPluginExecution() {
+    PluginExecution pluginExecution = new PluginExecution();
+    pluginExecution.setGoals(Collections.singletonList(WRAPPED_PLUGIN_GOAL));
+    pluginExecution.setId(WRAPPER_PLUGIN_ID);
+    pluginExecution.setPhase(WRAPPER_PLUGIN_PHASE);
+    return pluginExecution;
   }
 
   private Xpp3Dom computeWrappedPluginConfiguration(
